@@ -1,0 +1,11 @@
+{
+  "test": false,
+  "traininfo":[
+    {
+      "private_key": "private key hex here",
+      "jsonfile": "traininfo_area_04.json",
+      "url": "https://www3.nhk.or.jp/news/traffic/kanto/"
+    }
+  ]
+}
+
