@@ -1,8 +1,13 @@
 {
   "test": false,
+  "timeout": 9,
+  "relay": [
+    "wss://relay.nostr.or.jp",
+    "wss://relay.damus.io"
+  ],
   "traininfo":[
     {
-      "private_key": "private key hex here",
+      "private_key": "private key hex here. NOT 'nsec...'",
       "jsonfile": "traininfo_area_04.json",
       "url": "https://www3.nhk.or.jp/news/traffic/kanto/"
     }
