@@ -1,3 +1,5 @@
+<img src="https://utubo.github.io/nostr-bot-traininfo/img/area04.svg" style="height:4em">
+
 # nostr-bot-traininfo
 
 [NHK鉄道運行情報](https://www3.nhk.or.jp/news/traffic/)を10分毎に確認し変化があったらポストするnostrのbotです(非公式) 
