@@ -6,6 +6,7 @@
 ```sh
 gem install nostr_ruby
 gem install open-uri
+gem install parallel
 ```
 
 ## 設定ファイル
@@ -17,7 +18,7 @@ gem install open-uri
   - `private_key` 秘密鍵(HEX)
   - `url` 対象ページのURL。`https://www3.nhk.../traffic/地方名/`
   - `jsonfile` 取得するJSONのパス。`traininfo_area_地方コード.json`。対象ページをブラウザで開いて開発者ツールで調べることができます
-  
+
 ## 実行コマンド
 ```sh
 ruby traininfo.rb

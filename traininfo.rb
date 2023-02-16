@@ -13,6 +13,7 @@ require 'nostr_ruby'
 require 'open-uri'
 require 'json'
 require 'timeout'
+require 'parallel'
 
 # --------------------------------
 # Constants
@@ -131,7 +132,7 @@ config['traininfo'].each do |conf|
   else
     n = Nostr.new({ private_key: private_key })
     event = n.build_note_event(msg)
-    config['relay'].each do |relay|
+    Parallel.each(config['relay']) { |relay|
       begin
         Timeout.timeout(config['timeout']) {
           # nostr-ruby/lib/nostr_ruby.rb#test_post
@@ -156,7 +157,7 @@ config['traininfo'].each do |conf|
         logger.error("#{relay} #{e.to_s}")
         logger.debug(e)
       end
-    end
+    }
   end
 
   # ---------------
