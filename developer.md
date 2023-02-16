@@ -25,7 +25,8 @@ ruby traininfo.rb
 相手方の負荷に気をつけながら適宜cronに設定してください
 
 ## 生成ファイル
-- `log.log` ログ
-- `data`
-  - `*.json` ダウンロードしたJSONファイル
-  - `*.old.json` 1世代前のJSONファイル(デバッグ用)
+- `./`
+  - `log.log` ログ
+  - `data/`
+    - `*.json` ダウンロードしたJSONファイル
+    - `*.old.json` 1世代前のJSONファイル(デバッグ用)
