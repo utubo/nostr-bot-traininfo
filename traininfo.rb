@@ -93,7 +93,7 @@ config['traininfo'].each do |conf|
     veryShort.gsub!(/が出ています。/, '。')
     veryShort.gsub!(/見合わせています。/, '見合わせ。')
     veryShort.gsub!(/運転しています。/, '運転。')
-    veryShort.sub!(/。$/, '')
+    veryShort.gsub!(/再開しました。/, '再開。')
     line = "#{$STS_SIGN[item['status']]}#{item['trainLine']}：#{veryShort}"
     if item['textShort'] == before_msg[pk]
       no_updates << line
