@@ -89,7 +89,7 @@ config['traininfo'].each do |conf|
     next if item['status'] == $STS_NORMAL && before_sts[pk] == $STS_NORMAL
     veryShort = item['textShort'].dup
     veryShort.sub!(/^#{item['trainLine']}は、/, '')
-    veryShort.gsub!(/が出ています。/, '')
+    veryShort.gsub!(/が出ています。/, '。')
     veryShort.gsub!(/見合わせています。/, '見合わせ。')
     veryShort.gsub!(/運転しています。/, '運転。')
     veryShort.sub!(/。$/, '')
