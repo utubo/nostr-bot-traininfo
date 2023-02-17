@@ -69,14 +69,14 @@ config['traininfo'].each do |conf|
     logger.info('is not modified.')
     next
   end
-  before = JSON.load(before_json)
-  latest = JSON.load(latest_json)
+  before = JSON.load(before_json)['channel']['item']
+  latest = JSON.load(latest_json)['channel']['item']
 
   # ---------------
   # correct before data
   before_sts = Hash.new() {|hash, key| hash[key] = ''}
   before_msg = Hash.new() {|hash, key| hash[key] = ''}
-  before['channel']['item'].each do |item|
+  before.each do |item|
     pk = make_pk(item)
     before_sts[pk] = item['status']
     before_msg[pk] = item['textShort']
@@ -86,9 +86,9 @@ config['traininfo'].each do |conf|
   # make massage
   updates = []
   no_updates = []
-  latest['channel']['item'].each do |item|
+  latest.each do |item|
     pk = make_pk(item)
-    status = item['status']
+    status = item['status'].dup
     next if status == $STS_NORMAL && before_sts[pk] == $STS_NORMAL
 
     text = item['textShort'].dup
@@ -97,7 +97,7 @@ config['traininfo'].each do |conf|
     shortened = false
     if status == '運転見合わせ'
       # The suspended section is important.
-    elsif no_upd || status = $STS_NORMAL || status == '運転再開'
+    elsif no_upd || status == $STS_NORMAL || status == '運転再開'
       disarray = text.include?('ダイヤが乱れています。')
       if status == '運転状況' || status == '交通障害情報'
         if disarray
@@ -107,13 +107,13 @@ config['traininfo'].each do |conf|
           text.sub!(/^[^。]+影響で、/, '')
         end
       else
-        text = status
+        text = status.dup
         text << '(ダイヤ乱れあり)' if disarray
         shortened = true
       end
     end
     if !shortened
-      if !item['cause'].empty? && text.include?('影響で、')
+      if !item['cause'].empty?
         text.sub!(/^[^。]+影響で、/, "(#{item['cause']})")
       end
       text.sub!(/^#{item['trainLine']}は、/, '')
@@ -134,13 +134,11 @@ config['traininfo'].each do |conf|
   end
 
   lines = []
-  latest_length = latest['channel']['item'].length
-  before_length = before['channel']['item'].length
-  if before_length == latest_length && updates.length == 0
+  if before.length == latest.length && updates.length == 0
     # 'LastBuildDate' is changed only.
     logger.info('not modified.')
     next
-  elsif latest_length == 0
+  elsif latest.length == 0
     lines << $ALL_CLEAR
   elsif updates.length != 0
     lines << $UPDATES
