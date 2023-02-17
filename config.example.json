@@ -9,7 +9,10 @@
     {
       "private_key": "private key hex here. NOT 'nsec...'",
       "jsonfile": "traininfo_area_04.json",
-      "url": "https://www3.nhk.or.jp/news/traffic/kanto/"
+      "url": "https://www3.nhk.or.jp/news/traffic/kanto/",
+      "ignore": [
+        { "company": "銚子電鉄", "infoId": "00000013320881" }
+      ]
     }
   ]
 }

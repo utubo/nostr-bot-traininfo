@@ -36,6 +36,20 @@ def make_pk(item)
   item['companyCode'] + '-' + item['trainLineCode']
 end
 
+def match_any?(item, patterns)
+  patterns.each do |pattern|
+    m = true
+    pattern.each do |key, value|
+      if item[key] != value
+        m = false
+        break
+      end
+    end
+    return true if m
+  end
+  return false
+end
+
 # --------------------------------
 # Main
 logger.info('start')
@@ -50,6 +64,7 @@ config['traininfo'].each do |conf|
   private_key = conf['private_key']
   jsonfile = conf['jsonfile']
   link_url = conf['url']
+  ignore = conf['ignore'] || []
   logger.info(jsonfile)
 
   datadir = "#{__dir__}/data"
@@ -83,6 +98,7 @@ config['traininfo'].each do |conf|
   before_sts = Hash.new() {|hash, key| hash[key] = ''}
   before_msg = Hash.new() {|hash, key| hash[key] = ''}
   before.each do |item|
+    next if match_any?(item, ignore)
     pk = make_pk(item)
     before_sts[pk] = item['status']
     before_msg[pk] = item['textShort']
@@ -93,6 +109,7 @@ config['traininfo'].each do |conf|
   updates = []
   no_updates = []
   latest.each do |item|
+    next if match_any?(item, ignore)
     pk = make_pk(item)
     status = item['status'].dup
     next if status == $STS_NORMAL && before_sts[pk] == $STS_NORMAL
@@ -197,8 +214,8 @@ config['traininfo'].each do |conf|
         }
       rescue Timeout::Error
         logger.warn("#{relay} Timeout")
-      rescue => e
-        logger.error("#{relay} #{e.to_s}")
+      rescue Exception => e
+        logger.error("#{relay} #{e.message}")
         logger.debug(e)
       end
     }
