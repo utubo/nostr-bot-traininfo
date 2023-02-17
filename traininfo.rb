@@ -163,9 +163,8 @@ config['traininfo'].each do |conf|
     # 'LastBuildDate' is changed only.
     logger.info('not modified.')
     next
-  elsif latest.length == 0
-    lines << $ALL_CLEAR
-  elsif updates.length != 0
+  end
+  if updates.length != 0
     lines << $UPDATES
     lines << updates.first($MAX_ROWS)
     overflow = updates.length - $MAX_ROWS
@@ -177,8 +176,11 @@ config['traininfo'].each do |conf|
     overflow = no_updates.length - $MAX_ROWS
     lines << ($OVERFLOW % overflow) if 0 < overflow
   end
+  if lines.empty?
+    lines << $ALL_CLEAR
+  end
 
-  lines << link_url if ! lines.empty?
+  lines << link_url
   msg = lines.flatten.join("\n")
 
   if msg == File.read(cachetext)
