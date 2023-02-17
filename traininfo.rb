@@ -18,17 +18,18 @@ require 'parallel'
 # --------------------------------
 # Constants
 logger = Logger.new("#{__dir__}/log.log", 3)
-$URL_BASE = "https://www3.nhk.or.jp/n-data/traffic/train/_JSON_?_=#{Time.now.to_i}"
+$URL_BASE = "https://www3.nhk.or.jp/n-data/traffic/train/%s?_=#{Time.now.to_i}"
 $MAX_ROWS = 10
 $STS_NORMAL = '平常運転'
+$STS_RECOVER ='運転再開'
 $STS_SIGN = Hash.new {|hash, key| hash[key] = '🟡'}
-$STS_SIGN['平常運転'] = '🟢'
-$STS_SIGN['運転再開'] = '🟢'
+$STS_SIGN[$STS_NORMAL] = '🟢'
+$STS_SIGN[$STS_RECOVER] = '🟢'
 $STS_SIGN['運転見合わせ'] = '🔴'
-$ALL_CLEAR = "#{$STS_SIGN['平常運転']}現在、見合わせ・遅延などの情報はありません。"
+$ALL_CLEAR = "#{$STS_SIGN[$STS_NORMAL]}現在、見合わせ・遅延などの情報はありません。"
 $UPDATES = '🆙情報更新'
 $NO_UPDATES = '🕒更新なし'
-$OVERFLOW = '...他_n_件'
+$OVERFLOW = '...他%d件'
 
 # --------------------------------
 # Utils
@@ -85,7 +86,7 @@ config['traininfo'].each do |conf|
   # ---------------
   # load Data
   before_json = File.read(cachefile)
-  latest_json = URI.open($URL_BASE.sub('_JSON_', jsonfile)).read
+  latest_json = URI.open($URL_BASE % jsonfile).read
   if before_json == latest_json
     logger.info('not modified.')
     next
@@ -113,6 +114,7 @@ config['traininfo'].each do |conf|
     pk = make_pk(item)
     status = item['status'].dup
     next if status == $STS_NORMAL && before_sts[pk] == $STS_NORMAL
+    next if status == $STS_RECOVER && before_sts[pk] == $STS_RECOVER
 
     text = item['textShort'].dup
     no_upd = text == before_msg[pk]
@@ -120,7 +122,7 @@ config['traininfo'].each do |conf|
     shortened = false
     if status == '運転見合わせ'
       # The suspended section is important.
-    elsif no_upd || status == $STS_NORMAL || status == '運転再開'
+    elsif no_upd || status == $STS_NORMAL || status == $STS_RECOVER
       disarray = text.include?('ダイヤが乱れています。')
       if status == '運転状況' || status == '交通障害情報'
         if disarray
@@ -167,13 +169,13 @@ config['traininfo'].each do |conf|
     lines << $UPDATES
     lines << updates.first($MAX_ROWS)
     overflow = updates.length - $MAX_ROWS
-    lines << $OVERFLOW.sub('_n_', overflow) if 0 < overflow
+    lines << ($OVERFLOW % overflow) if 0 < overflow
   end
   if no_updates.length != 0
     lines << $NO_UPDATES
     lines << no_updates
     overflow = no_updates.length - $MAX_ROWS
-    lines << $OVERFLOW.sub('_n_', overflow) if 0 < overflow
+    lines << ($OVERFLOW % overflow) if 0 < overflow
   end
 
   lines << link_url if ! lines.empty?
