@@ -31,3 +31,4 @@ ruby traininfo.rb
   - `data/`
     - `*.json` ダウンロードしたJSONファイル
     - `*.old.json` 1世代前のJSONファイル(デバッグ用)
+    - `*.txt` ポストした内容(同じ内容をポストしないために使用します)

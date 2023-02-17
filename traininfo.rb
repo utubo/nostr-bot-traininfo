@@ -54,10 +54,16 @@ config['traininfo'].each do |conf|
 
   datadir = "#{__dir__}/data"
   cachefile = "#{datadir}/#{jsonfile}"
+  cachetext = "#{datadir}/#{jsonfile}".sub(/\.json$/, '.txt')
   mkdir Dir.mkdir(datadir) if ! File.directory?(datadir)
   if !File.file?(cachefile)
     File.open(cachefile, mode = 'w') { |f|
       f.write('{ "channel": { "item": [] } }')
+    }
+  end
+  if !File.file?(cachetext)
+    File.open(cachetext, mode = 'w') { |f|
+      f.write('')
     }
   end
 
@@ -66,7 +72,7 @@ config['traininfo'].each do |conf|
   before_json = File.read(cachefile)
   latest_json = URI.open($URL_BASE.sub('_JSON_', jsonfile)).read
   if before_json == latest_json
-    logger.info('is not modified.')
+    logger.info('not modified.')
     next
   end
   before = JSON.load(before_json)['channel']['item']
@@ -152,8 +158,15 @@ config['traininfo'].each do |conf|
     overflow = no_updates.length - $MAX_ROWS
     lines << $OVERFLOW.sub('_n_', overflow) if 0 < overflow
   end
+
   lines << link_url if ! lines.empty?
   msg = lines.flatten.join("\n")
+
+  if msg == File.read(cachetext)
+    logger.info('not modified.')
+    next
+  end
+
   logger.info(msg)
 
   # ---------------
@@ -198,6 +211,9 @@ config['traininfo'].each do |conf|
   }
   File.open(cachefile, mode = 'w') { |f|
     f.write(latest_json)
+  }
+  File.open(cachetext, mode = 'w') { |f|
+    f.write(msg)
   }
 
 end
