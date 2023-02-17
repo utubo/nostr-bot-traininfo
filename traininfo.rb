@@ -129,7 +129,7 @@ config['traininfo'].each do |conf|
           text = 'ダイヤ乱れ'
           shortened = true
         else
-          text.sub!(/^[^。]+影響で、/, '')
+          text.sub!(/^[^。]+影響(など)?で、/, '')
         end
       else
         text = status.dup
@@ -139,7 +139,7 @@ config['traininfo'].each do |conf|
     end
     if !shortened
       if !item['cause'].empty?
-        text.sub!(/^[^。]+影響で、/, "(#{item['cause']})")
+        text.sub!(/^[^。]+影響(など)?で、/, "(#{item['cause']})")
       end
       text.sub!(/^#{item['trainLine']}は、/, '')
       text.gsub!(/が出ています。/, '。')
