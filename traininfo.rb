@@ -23,6 +23,7 @@ $MAX_ROWS = 10
 $STS_NORMAL = '平常運転'
 $STS_SIGN = Hash.new {|hash, key| hash[key] = '🟡'}
 $STS_SIGN['平常運転'] = '🟢'
+$STS_SIGN['運転再開'] = '🟢'
 $STS_SIGN['運転見合わせ'] = '🔴'
 $ALL_CLEAR = "#{$STS_SIGN['平常運転']}現在、見合わせ・遅延などの情報はありません。"
 $UPDATES = '🆙情報更新'
@@ -87,15 +88,45 @@ config['traininfo'].each do |conf|
   no_updates = []
   latest['channel']['item'].each do |item|
     pk = make_pk(item)
-    next if item['status'] == $STS_NORMAL && before_sts[pk] == $STS_NORMAL
-    veryShort = item['textShort'].dup
-    veryShort.sub!(/^#{item['trainLine']}は、/, '')
-    veryShort.gsub!(/が出ています。/, '。')
-    veryShort.gsub!(/見合わせています。/, '見合わせ。')
-    veryShort.gsub!(/運転しています。/, '運転。')
-    veryShort.gsub!(/再開しました。/, '再開。')
-    line = "#{$STS_SIGN[item['status']]}#{item['trainLine']}：#{veryShort}"
-    if item['textShort'] == before_msg[pk]
+    status = item['status']
+    next if status == $STS_NORMAL && before_sts[pk] == $STS_NORMAL
+
+    text = item['textShort'].dup
+    no_upd = text == before_msg[pk]
+
+    shortened = false
+    if status == '運転見合わせ'
+      # The suspended section is important.
+    elsif no_upd || status = $STS_NORMAL || status == '運転再開'
+      disarray = text.include?('ダイヤが乱れています。')
+      if status == '運転状況' || status == '交通障害情報'
+        if disarray
+          text = 'ダイヤ乱れ'
+          shortened = true
+        else
+          text.sub!(/^[^。]+影響で、/, '')
+        end
+      else
+        text = status
+        text << '(ダイヤ乱れあり)' if disarray
+        shortened = true
+      end
+    end
+    if !shortened
+      if !item['cause'].empty? && text.include?('影響で、')
+        text.sub!(/^[^。]+影響で、/, "(#{item['cause']})")
+      end
+      text.sub!(/^#{item['trainLine']}は、/, '')
+      text.gsub!(/が出ています。/, '。')
+      text.gsub!(/となっています。/, '。')
+      text.gsub!(/見合わせています。/, '見合わせ。')
+      text.gsub!(/運転しています。/, '運転。')
+      text.gsub!(/再開しました。/, '再開。')
+      text.sub!(/。$/, '') if no_upd
+    end
+
+    line = "#{$STS_SIGN[status]}#{item['trainLine']}：#{text}"
+    if no_upd
       no_updates << line
     else
       updates << line
@@ -103,15 +134,15 @@ config['traininfo'].each do |conf|
   end
 
   lines = []
-  latest_count = latest['channel']['item'].length
-  before_count = before['channel']['item'].length
-  if updates.length == 0 && before_count == latest_count
+  latest_length = latest['channel']['item'].length
+  before_length = before['channel']['item'].length
+  if before_length == latest_length && updates.length == 0
     # 'LastBuildDate' is changed only.
     logger.info('not modified.')
     next
-  elsif latest_count == 0
+  elsif latest_length == 0
     lines << $ALL_CLEAR
-  else
+  elsif updates.length != 0
     lines << $UPDATES
     lines << updates.first($MAX_ROWS)
     overflow = updates.length - $MAX_ROWS
