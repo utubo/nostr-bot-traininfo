@@ -103,12 +103,14 @@ config['traininfo'].each do |conf|
   end
 
   lines = []
-  if latest['channel']['item'].empty? && !before['channel']['item'].empty?
-    lines << $ALL_CLEAR
-  elsif updates.length == 0
-    # some time, 'LastBuildDate' is changed only.
+  latest_count = latest['channel']['item'].length
+  before_count = before['channel']['item'].length
+  if updates.length == 0 && before_count == latest_count
+    # 'LastBuildDate' is changed only.
     logger.info('not modified.')
     next
+  elsif latest_count == 0
+    lines << $ALL_CLEAR
   else
     lines << $UPDATES
     lines << updates.first($MAX_ROWS)
