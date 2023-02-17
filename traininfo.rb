@@ -26,7 +26,7 @@ $STS_SIGN = Hash.new {|hash, key| hash[key] = '🟡'}
 $STS_SIGN[$STS_NORMAL] = '🟢'
 $STS_SIGN[$STS_RECOVER] = '🟢'
 $STS_SIGN['運転見合わせ'] = '🔴'
-$ALL_CLEAR = "#{$STS_SIGN[$STS_NORMAL]}現在、見合わせ・遅延などの情報はありません。"
+$ALL_CLEAR = "現在、見合わせ・遅延などの情報はありません。\n🚃🚃🚃🚃🚃🚃🚃🚃🎶🎶"
 $UPDATES = '🆙情報更新'
 $NO_UPDATES = '🕒更新なし'
 $OVERFLOW = '...他%d件'
