@@ -183,7 +183,7 @@ config['traininfo'].each do |conf|
   lines << link_url
   msg = lines.flatten.join("\n")
 
-  if msg == File.read(cachetext)
+  if msg == File.read(cachetext, encoding: Encoding::UTF_8)
     logger.info('not modified.')
     next
   end
