@@ -233,7 +233,7 @@ config['traininfo'].each do |conf|
   File.open(cachefile, mode = 'w') { |f|
     f.write(latest_json)
   }
-  File.open(cachetext, mode = 'w') { |f|
+  File.open(cachetext, mode = 'w:UTF-8') { |f|
     f.write(msg)
   }
 
