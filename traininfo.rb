@@ -14,6 +14,7 @@ require 'open-uri'
 require 'json'
 require 'timeout'
 require 'parallel'
+require 'ostruct'
 
 # --------------------------------
 # Constants
@@ -22,10 +23,11 @@ $URL_BASE = "https://www3.nhk.or.jp/n-data/traffic/train/%s?_=#{Time.now.to_i}"
 $MAX_ROWS = 10
 $STS_NORMAL = '平常運転'
 $STS_RECOVER ='運転再開'
-$STS_SIGN = Hash.new {|hash, key| hash[key] = '🟡'}
-$STS_SIGN[$STS_NORMAL] = '🟢'
-$STS_SIGN[$STS_RECOVER] = '🟢'
-$STS_SIGN['運転見合わせ'] = '🔴'
+$STS_SUSPEND ='運転見合わせ'
+$STS = Hash.new {|hash, key| hash[key] = OpenStruct.new({ sign: '🟡', level: 0 })}
+$STS[$STS_NORMAL]  = OpenStruct.new({ sign: '🟢', level: 1 })
+$STS[$STS_RECOVER] = OpenStruct.new({ sign: '🟢', level: 2 })
+$STS[$STS_SUSPEND] = OpenStruct.new({ sign: '🔴', level: 3 })
 $ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません🚃🎶"
 $UPDATES = '🆙情報更新'
 $NO_UPDATES = '🕒更新なし'
@@ -110,7 +112,8 @@ config['traininfo'].each do |conf|
   updates = []
   no_updates = []
   is_all_clear = true
-  latest.each do |item|
+  sorted = latest.sort { |a, b| $STS[b['status']].level <=> $STS[a['status']].level }
+  sorted.each do |item|
     next if match_any?(item, ignore)
 
     status = item['status'].dup
@@ -126,7 +129,7 @@ config['traininfo'].each do |conf|
     no_upd = text == before_msg[pk]
 
     shortened = false
-    if status == '運転見合わせ'
+    if status == $STS_SUSPEND
       # The suspended section is important.
     elsif no_upd || status == $STS_NORMAL || status == $STS_RECOVER
       disarray = text.include?('ダイヤが乱れています。')
@@ -157,7 +160,7 @@ config['traininfo'].each do |conf|
       text.sub!(/。$/, '') if no_upd
     end
 
-    line = "#{$STS_SIGN[status]}#{item['trainLine']}：#{text}"
+    line = "#{$STS[status].sign}#{item['trainLine']}：#{text}"
     if no_upd
       no_updates << line
     else
