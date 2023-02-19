@@ -21,13 +21,15 @@ require 'ostruct'
 logger = Logger.new("#{__dir__}/log.log", 3)
 $URL_BASE = "https://www3.nhk.or.jp/n-data/traffic/train/%s?_=#{Time.now.to_i}"
 $MAX_ROWS = 10
-$STS_NORMAL = '平常運転'
-$STS_RECOVER ='運転再開'
-$STS_SUSPEND ='運転見合わせ'
+$STS_NORMAL  = '平常運転'
+$STS_RECOVER = '運転再開'
+$STS_SUSPEND = '運転見合わせ'
+$STS_DELAY   = '列車遅延'
 $STS = Hash.new {|hash, key| hash[key] = OpenStruct.new({ sign: '🟡', level: 0 })}
 $STS[$STS_NORMAL]  = OpenStruct.new({ sign: '🟢', level: 1 })
 $STS[$STS_RECOVER] = OpenStruct.new({ sign: '🟢', level: 2 })
 $STS[$STS_SUSPEND] = OpenStruct.new({ sign: '🔴', level: 3 })
+$STS['運転計画']   = OpenStruct.new({ sign: 'ℹ️', level: 0 })
 $ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません🚃🎶"
 $UPDATES = '🆙情報更新'
 $NO_UPDATES = '🕒更新なし'
@@ -137,21 +139,20 @@ config['traininfo'].each do |conf|
     no_upd = text == before_msg[pk]
 
     shortened = false
-    if status == $STS_SUSPEND
+    if status == $STS_NORMAL || status == $STS_RECOVER
+      text = status.dup
+      shortened = true
+    elsif status == $STS_SUSPEND
       # The suspended section is important.
-    elsif no_upd || status == $STS_NORMAL || status == $STS_RECOVER
-      disarray = text.include?('ダイヤが乱れています。')
-      if status == '運転状況' || status == '交通障害情報'
-        if disarray
-          text = 'ダイヤ乱れ'
-          shortened = true
-        else
-          text.sub!(/^[^。]+影響(など)?で、/, '')
-        end
-      else
+    elsif no_upd
+      if status == $STS_DELAY
         text = status.dup
-        text << '(ダイヤ乱れあり)' if disarray
         shortened = true
+      elsif text.include?('ダイヤが乱れています。')
+        text = 'ダイヤ乱れ'
+        shortened = true
+      else
+        text.sub!(/^[^。]+影響(など)?で、/, '')
       end
     end
     if !shortened
