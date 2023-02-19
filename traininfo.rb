@@ -26,7 +26,7 @@ $STS_SIGN = Hash.new {|hash, key| hash[key] = '🟡'}
 $STS_SIGN[$STS_NORMAL] = '🟢'
 $STS_SIGN[$STS_RECOVER] = '🟢'
 $STS_SIGN['運転見合わせ'] = '🔴'
-$ALL_CLEAR = "現在、見合わせ・遅延などの情報はありません。\n🚃🚃🚃🚃🚃🚃🚃🚃🎶"
+$ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません🚃🎶"
 $UPDATES = '🆙情報更新'
 $NO_UPDATES = '🕒更新なし'
 $OVERFLOW = '...他%d件'
@@ -153,6 +153,7 @@ config['traininfo'].each do |conf|
       text.gsub!(/見合わせています。/, '見合わせ。')
       text.gsub!(/運転しています。/, '運転。')
       text.gsub!(/再開しました。/, '再開。')
+      text.gsub!(/を中止しています。/, '中止。')
       text.sub!(/。$/, '') if no_upd
     end
 
