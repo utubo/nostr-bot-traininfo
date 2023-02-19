@@ -109,10 +109,16 @@ config['traininfo'].each do |conf|
   # make massage
   updates = []
   no_updates = []
+  is_all_clear = true
   latest.each do |item|
     next if match_any?(item, ignore)
-    pk = make_pk(item)
+
     status = item['status'].dup
+    if status != $STS_NORMAL
+      is_all_clear = false
+    end
+
+    pk = make_pk(item)
     next if status == $STS_NORMAL && before_sts[pk] == $STS_NORMAL
     next if status == $STS_RECOVER && before_sts[pk] == $STS_RECOVER
 
@@ -176,8 +182,8 @@ config['traininfo'].each do |conf|
     overflow = no_updates.length - $MAX_ROWS
     lines << ($OVERFLOW % overflow) if 0 < overflow
   end
-  if lines.empty?
-    lines << $ALL_CLEAR
+  if is_all_clear || lines.empty?
+    lines = [$ALL_CLEAR]
   end
 
   lines << link_url
