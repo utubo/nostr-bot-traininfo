@@ -53,6 +53,14 @@ def match_any?(item, patterns)
   return false
 end
 
+def trancate(lines, count)
+  l = []
+  l << lines.first(count)
+  overflow = lines.length - count
+  l << ($OVERFLOW % overflow) if 0 < overflow
+  return l
+end
+
 # --------------------------------
 # Main
 logger.info('start')
@@ -169,25 +177,20 @@ config['traininfo'].each do |conf|
   end
 
   lines = []
-  if before.length == latest.length && updates.length == 0
-    # 'LastBuildDate' is changed only.
-    logger.info('not modified.')
-    next
-  end
-  if updates.length != 0
-    lines << $UPDATES
-    lines << updates.first($MAX_ROWS)
-    overflow = updates.length - $MAX_ROWS
-    lines << ($OVERFLOW % overflow) if 0 < overflow
-  end
-  if no_updates.length != 0
-    lines << $NO_UPDATES
-    lines << no_updates
-    overflow = no_updates.length - $MAX_ROWS
-    lines << ($OVERFLOW % overflow) if 0 < overflow
-  end
-  if is_all_clear || lines.empty?
-    lines = [$ALL_CLEAR]
+  if is_all_clear
+    lines << $ALL_CLEAR
+  else
+    if updates.length != 0
+      lines << $UPDATES
+      lines << trancate(updates, $MAX_ROWS)
+    else
+      logger.info('not modified.')
+      next
+    end
+    if no_updates.length != 0
+      lines << $NO_UPDATES
+      lines << trancate(no_updates, $MAX_ROWS)
+    end
   end
 
   lines << link_url
