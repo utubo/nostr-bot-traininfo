@@ -122,6 +122,7 @@ config['traininfo'].each do |conf|
   updates = []
   no_updates = []
   is_all_clear = true
+  text_long = ''
   sorted = latest.sort { |a, b| $STS[b['status']].level <=> $STS[a['status']].level }
   sorted.each do |item|
     next if match_any?(item, ignore)
@@ -172,6 +173,7 @@ config['traininfo'].each do |conf|
     line = "#{$STS[status].sign}#{item['trainLine']}：#{text}"
     if no_upd
       no_updates << line
+      text_long = "#{$STS[status].sign}#{item['trainLine']}：#{item['textLong']}"
     else
       updates << line
     end
@@ -181,12 +183,15 @@ config['traininfo'].each do |conf|
   if is_all_clear
     lines << $ALL_CLEAR
   else
-    if updates.length != 0
-      lines << $UPDATES
-      lines << trancate(updates, $MAX_ROWS)
-    else
+    if updates.length == 0
       logger.info('not modified.')
       next
+    elsif updates.length == 1
+      lines << $UPDATES
+      lines << text_long
+    else
+      lines << $UPDATES
+      lines << trancate(updates, $MAX_ROWS)
     end
     if no_updates.length != 0
       lines << $NO_UPDATES
