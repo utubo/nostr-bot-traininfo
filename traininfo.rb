@@ -173,9 +173,9 @@ config['traininfo'].each do |conf|
     line = "#{$STS[status].sign}#{item['trainLine']}：#{text}"
     if no_upd
       no_updates << line
-      text_long = "#{$STS[status].sign}#{item['trainLine']}：#{item['textLong']}"
     else
       updates << line
+      text_long = "#{$STS[status].sign}#{item['trainLine']}：#{item['textLong']}"
     end
   end
 
