@@ -31,7 +31,7 @@ $STS[$STS_RECOVER] = OpenStruct.new({ sign: '🟢', level: 2 })
 $STS[$STS_SUSPEND] = OpenStruct.new({ sign: '🔴', level: 3 })
 $STS['運転計画']   = OpenStruct.new({ sign: 'ℹ️', level: 0 })
 $ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません🚃🎶"
-$UPDATES = '🆙情報更新'
+$UPDATES = '🆙更新'
 $NO_UPDATES = '🕒更新なし'
 $OVERFLOW = '...他%d件'
 
@@ -218,8 +218,11 @@ config['traininfo'].each do |conf|
           response = nil
           ws = WebSocket::Client::Simple.connect relay
           ws.on :message do |msg|
-            logger.debug("#{relay} #{msg.to_s}")
             response = JSON.parse(msg.data)
+            logger.log(
+              response[0] == 'OK' ? Logger::DEBUG : Logger::WARN,
+              "#{relay} #{msg.to_s}"
+            )
             ws.close
           end
           ws.on :open do
@@ -228,7 +231,6 @@ config['traininfo'].each do |conf|
           while response.nil? do
             sleep 0.1
           end
-          response[0] == 'OK'
         }
       rescue Timeout::Error
         logger.warn("#{relay} Timeout")
