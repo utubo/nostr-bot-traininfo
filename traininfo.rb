@@ -207,7 +207,7 @@ config['traininfo'].each do |conf|
     next
   end
 
-  logger.info(msg)
+  logger.info("\n" + msg)
 
   # ---------------
   # post
