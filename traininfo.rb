@@ -163,6 +163,7 @@ config['traininfo'].each do |conf|
       text.sub!(/^#{item['trainLine']}は、/, '')
       text.gsub!(/が出ています。/, '。')
       text.gsub!(/となっています。/, '。')
+      text.gsub!(/。(なお|また)、/, '。')
       text.gsub!(/運転しています。/, '運転。')
       text.gsub!(/再開しました。/, '再開。')
       text.gsub!(/を見合わせています。/, '見合わせ。')
@@ -207,10 +208,9 @@ config['traininfo'].each do |conf|
     next
   end
 
-  logger.info("\n" + msg)
-
   # ---------------
   # post
+  logger.info("post\n" + msg)
   if $test
     puts msg
   else
