@@ -163,9 +163,9 @@ config['traininfo'].each do |conf|
       text.sub!(/^#{item['trainLine']}は、/, '')
       text.gsub!(/が出ています。/, '。')
       text.gsub!(/となっています。/, '。')
-      text.gsub!(/見合わせています。/, '見合わせ。')
       text.gsub!(/運転しています。/, '運転。')
       text.gsub!(/再開しました。/, '再開。')
+      text.gsub!(/を見合わせています。/, '見合わせ。')
       text.gsub!(/を中止しています。/, '中止。')
       text.sub!(/。$/, '') if no_upd
     end
