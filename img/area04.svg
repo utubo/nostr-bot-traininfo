@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 32 32">
 <path fill="#86d" d="M0 0h32v32h-32z"/>
-<g fill="#fff">
-  <path d="M5 22v-14q0-6 8-6h6q8 0 8 6v14l-2 4h-18l-2-4z"/>
+<g fill="#fff" stroke="none">
+  <path d="M8 28h16l2 2h-20z"/>
   <path d="M12 25l-5 8h 3l 4-9z"/>
   <path d="M20 25l 5 8h-3l-4-9z"/>
-  <path d="M8 28h16l2 2h-20z"/>
+  <path d="M5 22v-14q0-6 8-6h6q8 0 8 6v14l-2 4h-18l-2-4z"/>
 </g>
-<g fill="#86d">
+<g fill="#86d" stroke="none">
   <path d="M13 4h6v2h-6z"/>
   <path d="M10 8h13q2 0 2 2v7h-18v-7q0-2 2-2z"/>
   <circle cx="10" cy="21" r="1.5"/>
