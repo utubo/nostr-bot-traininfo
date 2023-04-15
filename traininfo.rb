@@ -3,7 +3,7 @@
 # --------------------------------
 # Environment
 $test = false
-#$test = true # you can set true to stdout insted of post.
+#$test = true # you can set true to stdout instead of post.
 
 # --------------------------------
 # Requires
@@ -32,7 +32,7 @@ $STS[$STS_SUSPEND] = OpenStruct.new({ sign: '🔴', level: 3 })
 $STS['運転計画']   = OpenStruct.new({ sign: 'ℹ️', level: 0 })
 $ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません🚃🎶"
 $UPDATES = '🆙更新'
-$NO_UPDATES = '🕒更新なし'
+$NO_UPDATES = '🕒現状維持'
 $OVERFLOW = '...他%d件'
 
 # --------------------------------
