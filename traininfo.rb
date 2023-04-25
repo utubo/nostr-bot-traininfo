@@ -11,6 +11,7 @@ $test = false
 require 'logger'
 require 'nostr_ruby'
 require 'open-uri'
+require 'openssl'
 require 'json'
 require 'timeout'
 require 'parallel'
@@ -98,7 +99,7 @@ config['traininfo'].each do |conf|
   # ---------------
   # load Data
   before_json = File.read(cachefile)
-  latest_json = URI.open($URL_BASE % jsonfile).read
+  latest_json = URI.open($URL_BASE % jsonfile, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   if before_json == latest_json
     logger.info('not modified.')
     next
