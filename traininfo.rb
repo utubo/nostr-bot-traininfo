@@ -2,10 +2,6 @@
 
 # --------------------------------
 # Environment
-$nostr = true
-#$bsky = true # you can set true to post to nostr.
-$bsky = true
-#$bsky = true # you can set true to post to bluesky.
 $test = false
 #$test = true # you can set true to stdout instead of post.
 
@@ -19,8 +15,10 @@ require 'json'
 require 'timeout'
 require 'parallel'
 require 'ostruct'
-require 'nostr_ruby' if $nostr
-require 'bskyrb' if $bsky
+
+# Require these in `reqruire gems for sns` section.
+# require 'nostr_ruby'
+# require 'bskyrb'
 
 # --------------------------------
 # Constants
@@ -102,6 +100,13 @@ config['traininfo'].each do |conf|
       f.write('')
     }
   end
+
+  # ---------------
+  # reqruire gems for sns
+  $nostr = !private_key.empty?
+  $bsky = !bsky_username.empty?
+  require 'nostr_ruby' if $nostr
+  require 'bskyrb' if $bsky
 
   # ---------------
   # load Data
