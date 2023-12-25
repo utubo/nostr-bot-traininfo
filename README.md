@@ -24,4 +24,5 @@
   - nostr:npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330
   - [iris](https://iris.to/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
   - [snort](http://snort.social/p/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
+  - utubo.bsky.social
 
