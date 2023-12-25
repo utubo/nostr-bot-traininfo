@@ -29,5 +29,5 @@ nostrとBlueskyのbotです(非公式)
     - [iris](https://iris.to/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
     - [snort](http://snort.social/p/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
   - Bluesky
-    - utubo.bsky.social
+    - [utubo.bsky.social](https://bsky.app/profile/utubo.bsky.social)
 
