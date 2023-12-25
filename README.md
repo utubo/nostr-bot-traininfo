@@ -6,6 +6,7 @@
 - nostr:npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5
 - [iris](https://iris.to/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
 - [snort](http://snort.social/p/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
+- traininfo-kanto.bsky.social
 
 
 ## FAQ
@@ -15,9 +16,6 @@
   - `平常運転`→`平常運転`のまま変わらない行
   - `運転再開`→`運転再開`のまま変わらない行
   - `山万ユーカリが丘線 車両都合の影響で、平日、朝夕ラッシュ時間帯は、本数を減らしての運転となります。`(常時あるため)
-
-### ~~更新がなくてもポストするの？~~
-  - ~~`情報更新がある状態`から`情報更新がない状態`になったとき、一度だけポストします~~
 
 
 ## 連絡先
