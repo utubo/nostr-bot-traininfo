@@ -2,6 +2,10 @@
 
 # --------------------------------
 # Environment
+$nostr = true
+#$bsky = true # you can set true to post to nostr.
+$bsky = false
+#$bsky = true # you can set true to post to bluesky.
 $test = false
 #$test = true # you can set true to stdout instead of post.
 
@@ -9,13 +13,14 @@ $test = false
 # Requires
 
 require 'logger'
-require 'nostr_ruby'
 require 'open-uri'
 require 'openssl'
 require 'json'
 require 'timeout'
 require 'parallel'
 require 'ostruct'
+require 'nostr_ruby' if $nostr
+require 'bskyrb' if $bsky
 
 # --------------------------------
 # Constants
@@ -76,6 +81,8 @@ config['traininfo'].each do |conf|
   # ---------------
   # setup
   private_key = conf['private_key']
+  bsky_username = conf['bsky_username']
+  bsky_password = conf['bsky_password']
   jsonfile = conf['jsonfile']
   link_url = conf['url']
   ignore = conf['ignore'] || []
@@ -214,7 +221,14 @@ config['traininfo'].each do |conf|
   logger.info("post\n" + msg)
   if $test
     puts msg
-  else
+  end
+  if !$test && $bsky
+    credentials = Bskyrb::Credentials.new(bsky_username, bsky_password)
+    session = Bskyrb::Session.new(credentials, 'https://bsky.social')
+    bsky = Bskyrb::RecordManager.new(session)
+    post = bsky.create_post(msg)
+  end
+  if !$test && $nostr
     n = Nostr.new({ private_key: private_key })
     event = n.build_note_event(msg)
     Parallel.each(config['relay']) { |relay|

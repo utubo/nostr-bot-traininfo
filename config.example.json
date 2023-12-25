@@ -8,6 +8,8 @@
   "traininfo":[
     {
       "private_key": "private key hex here. NOT 'nsec...'",
+      "bsky_username": "",
+      "bsky_password": "",
       "jsonfile": "traininfo_area_04.json",
       "url": "https://www3.nhk.or.jp/news/traffic/kanto/",
       "ignore": [
