@@ -6,7 +6,7 @@
 - nostr:npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5
   - [iris](https://iris.to/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
   - [snort](http://snort.social/p/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
-- traininfo-kanto.bsky.social
+- [traininfo-kanto.bsky.social](https://bsky.app/profile/traininfo-kanto.bsky.social)
 
 
 ## FAQ
