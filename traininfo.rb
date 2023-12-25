@@ -4,7 +4,7 @@
 # Environment
 $nostr = true
 #$bsky = true # you can set true to post to nostr.
-$bsky = false
+$bsky = true
 #$bsky = true # you can set true to post to bluesky.
 $test = false
 #$test = true # you can set true to stdout instead of post.

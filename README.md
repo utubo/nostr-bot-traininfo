@@ -4,8 +4,8 @@
 
 ## アカウント
 - nostr:npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5
-- [iris](https://iris.to/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
-- [snort](http://snort.social/p/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
+  - [iris](https://iris.to/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
+  - [snort](http://snort.social/p/npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5)
 - traininfo-kanto.bsky.social
 
 
@@ -22,7 +22,7 @@
 - 何か思いついたら[Issues](https://github.com/utubo/nostr-bot-traininfo/issues)へどうぞ！
 - 作成者
   - nostr:npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330
-  - [iris](https://iris.to/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
-  - [snort](http://snort.social/p/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
+    - [iris](https://iris.to/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
+    - [snort](http://snort.social/p/npub1fz7mw8f9qgsdc06ftkgxatx48e5fzw7n37kfgyl48t03qx8zferqu7d330)
   - utubo.bsky.social
 
