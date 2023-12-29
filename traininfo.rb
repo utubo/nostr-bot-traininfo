@@ -137,18 +137,6 @@ config['traininfo'].each do |conf|
   before_msg = Hash.new() {|hash, key| hash[key] = ''}
   before.each do |item|
     next if match_any?(item, ignore)
-    infoId = item['infoId']
-    if before_data['history'].has_key?(infoId)
-      timestamp = before_data['history'][infoId]
-      latest_data['history'][infoId] = timestamp
-      interval = $NOW - Time.parse(timestamp)
-      if ignore_days != 0 && ignore_days_sec < interval
-        ignore << { infoId: infoId }
-        logger.info("skip infoId #=> #{infoId}, interval #=> #{interval}sec")
-      end
-    else
-      latest_data['history'][infoId] = $NOW
-    end
     pk = make_pk(item)
     before_sts[pk] = item['status']
     before_msg[pk] = item['textShort']
@@ -163,6 +151,18 @@ config['traininfo'].each do |conf|
   sorted = latest.sort { |a, b| $STS[b['status']].level <=> $STS[a['status']].level }
   sorted.each do |item|
     next if match_any?(item, ignore)
+    infoId = item['infoId']
+    if before_data['history'].has_key?(infoId)
+      timestamp = before_data['history'][infoId]
+      latest_data['history'][infoId] = timestamp
+      interval = $NOW - Time.parse(timestamp)
+      if ignore_days != 0 && ignore_days_sec < interval
+        logger.debug("skip infoId #=> #{infoId}, interval #=> #{interval}sec")
+        next
+      end
+    else
+      latest_data['history'][infoId] = $NOW
+    end
 
     status = item['status'].dup
     if status != $STS_NORMAL
