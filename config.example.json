@@ -12,6 +12,7 @@
       "bsky_password": "",
       "jsonfile": "traininfo_area_04.json",
       "url": "https://www3.nhk.or.jp/news/traffic/kanto/",
+      "ignore_days": 3,
       "ignore": [
         { "company": "銚子電鉄", "infoId": "00000013320881" }
       ]

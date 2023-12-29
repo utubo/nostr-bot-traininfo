@@ -15,6 +15,7 @@ require 'json'
 require 'timeout'
 require 'parallel'
 require 'ostruct'
+require 'time'
 
 # Require these in `reqruire gems for sns` section.
 # require 'nostr_ruby'
@@ -23,7 +24,8 @@ require 'ostruct'
 # --------------------------------
 # Constants
 logger = Logger.new("#{__dir__}/log.log", 3)
-$URL_BASE = "https://www3.nhk.or.jp/n-data/traffic/train/%s?_=#{Time.now.to_i}"
+$NOW = Time.now
+$URL_BASE = "https://www3.nhk.or.jp/n-data/traffic/train/%s?_=#{$NOW.to_i}"
 $MAX_ROWS = 10
 $STS_NORMAL  = '平常運転'
 $STS_RECOVER = '運転再開'
@@ -34,7 +36,7 @@ $STS[$STS_NORMAL]  = OpenStruct.new({ sign: '🟢', level: 1 })
 $STS[$STS_RECOVER] = OpenStruct.new({ sign: '🟢', level: 2 })
 $STS[$STS_SUSPEND] = OpenStruct.new({ sign: '🔴', level: 3 })
 $STS['運転計画']   = OpenStruct.new({ sign: 'ℹ️', level: 0 })
-$ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません🚃🎶"
+$ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません\n🎶🚃🚃🚃🚃🚃🚃🚃🚃🚃..."
 $UPDATES = '🆙更新'
 $NO_UPDATES = '🕒現状維持'
 $OVERFLOW = '...他%d件'
@@ -84,15 +86,23 @@ config['traininfo'].each do |conf|
   jsonfile = conf['jsonfile']
   link_url = conf['url']
   ignore = conf['ignore'] || []
+  ignore_days = conf['ignore_days'] || 3
+  ignore_days_sec = ignore_days * 24 * 60 * 60
   logger.info(jsonfile)
 
   datadir = "#{__dir__}/data"
   cachefile = "#{datadir}/#{jsonfile}"
   cachetext = "#{datadir}/#{jsonfile}".sub(/\.json$/, '.txt')
+  cachedata = "#{datadir}/#{jsonfile}".sub(/\.json$/, '.dat.json')
   mkdir Dir.mkdir(datadir) if ! File.directory?(datadir)
   if !File.file?(cachefile)
     File.open(cachefile, mode = 'w') { |f|
       f.write('{ "channel": { "item": [] } }')
+    }
+  end
+  if !File.file?(cachedata)
+    File.open(cachedata, mode = 'w') { |f|
+      f.write('{ "history": {} }')
     }
   end
   if !File.file?(cachetext)
@@ -118,6 +128,8 @@ config['traininfo'].each do |conf|
   end
   before = JSON.load(before_json)['channel']['item']
   latest = JSON.load(latest_json)['channel']['item']
+  before_data = JSON.load(File.read(cachedata))
+  latest_data = JSON.load('{ "history": {} }')
 
   # ---------------
   # correct before data
@@ -125,6 +137,14 @@ config['traininfo'].each do |conf|
   before_msg = Hash.new() {|hash, key| hash[key] = ''}
   before.each do |item|
     next if match_any?(item, ignore)
+    infoId = item['infoId']
+    if before_data['history'].has_key?(infoId)
+      timestamp = before_data['history'][infoId]
+      latest_data['history'][infoId] = timestamp
+      next if ignore_days != 0 && ignore_days_sec < $NOW - Time.parse(timestamp)
+    else
+      latest_data['history'][infoId] = $NOW
+    end
     pk = make_pk(item)
     before_sts[pk] = item['status']
     before_msg[pk] = item['textShort']
@@ -273,6 +293,9 @@ config['traininfo'].each do |conf|
   }
   File.open(cachefile, mode = 'w') { |f|
     f.write(latest_json)
+  }
+  File.open(cachedata, mode = 'w') { |f|
+    f.write(JSON.pretty_generate(latest_data))
   }
   File.open(cachetext, mode = 'w:UTF-8') { |f|
     f.write(msg)
