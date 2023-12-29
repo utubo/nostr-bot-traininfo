@@ -141,7 +141,11 @@ config['traininfo'].each do |conf|
     if before_data['history'].has_key?(infoId)
       timestamp = before_data['history'][infoId]
       latest_data['history'][infoId] = timestamp
-      next if ignore_days != 0 && ignore_days_sec < $NOW - Time.parse(timestamp)
+      interval = $NOW - Time.parse(timestamp)
+      if ignore_days != 0 && ignore_days_sec < interval
+        ignore << { infoId: infoId }
+        logger.info("skip infoId #=> #{infoId}, interval #=> #{interval}sec")
+      end
     else
       latest_data['history'][infoId] = $NOW
     end
