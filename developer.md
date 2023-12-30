@@ -18,7 +18,8 @@ gem install parallel
   - `private_key` 秘密鍵(HEX)
   - `url` 対象ページのURL。`https://www3.nhk.../traffic/地方名/`
   - `jsonfile` 取得するJSONのパス。`traininfo_area_地方コード.json`。対象ページをブラウザで開いて開発者ツールで調べることができます
-  - `ignore` スキップする情報です。配列で指定したオブジェクトのいずれかにマッチした場合スキップします
+  - `igrore_days` この日数の間変化がないものはスキップします
+  - `ignore` 特定の条件でスキップします。配列で指定したオブジェクトのいずれかにマッチした場合スキップします
 
 ## 実行コマンド
 ```sh
