@@ -15,7 +15,9 @@ gem install parallel
 - `timeout` 1リレーごとのタイムアウト秒数
 - `relay` ポスト先のリレー
 - `traininfo` 運行情報の取得とnostr秘密鍵の指定(複数可)
-  - `private_key` 秘密鍵(HEX)
+  - `private_key` nostrの秘密鍵(HEX)
+  - `bsky_username` Blueskyアカウントのユーザー名
+  - `bsky_password` Blkeskyアカウントのパスワード
   - `url` 対象ページのURL。`https://www3.nhk.../traffic/地方名/`
   - `jsonfile` 取得するJSONのパス。`traininfo_area_地方コード.json`。対象ページをブラウザで開いて開発者ツールで調べることができます
   - `igrore_days` この日数の間変化がないものはスキップします
@@ -33,4 +35,6 @@ ruby traininfo.rb
   - `data/`
     - `*.json` ダウンロードしたJSONファイル
     - `*.old.json` 1世代前のJSONファイル(デバッグ用)
+    - `*.dat.json` 各種データ(現状は各情報の最終取得日の保持のみに使用しています)
     - `*.txt` ポストした内容(同じ内容をポストしないために使用します)
+
