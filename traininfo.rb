@@ -256,6 +256,7 @@ config['traininfo'].each do |conf|
     session = Bskyrb::Session.new(credentials, 'https://bsky.social')
     bsky = Bskyrb::RecordManager.new(session)
     post = bsky.create_post(msg)
+    logger.log(Logger::DEBUG, "#{bsky_username} #{post}")
   end
   if !$test && $nostr
     n = Nostr.new({ private_key: private_key })
