@@ -5,6 +5,7 @@
 - gem
 ```sh
 gem install nostr_ruby
+gem install bskyrb
 gem install open-uri
 gem install parallel
 ```
