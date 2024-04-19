@@ -97,7 +97,6 @@ config['traininfo'].each do |conf|
 
   datadir = "#{__dir__}/data"
   cachefile = "#{datadir}/#{jsonfile}"
-  cachetext = "#{datadir}/#{jsonfile}".sub(/\.json$/, '.txt')
   cachedata = "#{datadir}/#{jsonfile}".sub(/\.json$/, '.dat.json')
   mkdir Dir.mkdir(datadir) if ! File.directory?(datadir)
   if !File.file?(cachefile)
@@ -107,12 +106,7 @@ config['traininfo'].each do |conf|
   end
   if !File.file?(cachedata)
     File.open(cachedata, mode = 'w') { |f|
-      f.write('{ "history": {} }')
-    }
-  end
-  if !File.file?(cachetext)
-    File.open(cachetext, mode = 'w') { |f|
-      f.write('')
+      f.write('{ "history": {}, "last_post": "" }')
     }
   end
 
@@ -134,7 +128,7 @@ config['traininfo'].each do |conf|
   before = JSON.load(before_json)['channel']['item']
   latest = JSON.load(latest_json)['channel']['item']
   before_data = JSON.load(File.read(cachedata))
-  latest_data = JSON.load('{ "history": {} }')
+  latest_data = JSON.load('{ "history": {}, "last_post": "" }')
 
   # ---------------
   # correct before data
@@ -212,7 +206,7 @@ config['traininfo'].each do |conf|
       text.gsub!(/再開しました。/, '再開。')
       text.gsub!(/を見合わせています。/, '見合わせ。')
       text.gsub!(/を中止しています。/, '中止。')
-      text.sub!(/。$/, '') if !is_upd
+      text.sub!(/^([^。]*)。$/, '\1')
     end
 
     line = "#{$STS[status].sign}#{item['trainLine']}：#{text}"
@@ -222,13 +216,13 @@ config['traininfo'].each do |conf|
   if is_all_clear
     lines = [$ALL_CLEAR]
   elsif lines.empty?
-    logger.info('not modified.')
+    logger.info('empty.')
     next
   end
   lines = trancate(lines, $MAX_ROWS)
   lines << link_url
   msg = lines.flatten.join("\n")
-  if msg == File.read(cachetext, encoding: Encoding::UTF_8)
+  if msg == before_data['last_post']
     logger.info('not modified.')
     next
   end
@@ -288,10 +282,8 @@ config['traininfo'].each do |conf|
     f.write(latest_json)
   }
   File.open(cachedata, mode = 'w') { |f|
+    latest_data["last_post"] = msg
     f.write(JSON.pretty_generate(latest_data))
-  }
-  File.open(cachetext, mode = 'w:UTF-8') { |f|
-    f.write(msg)
   }
 
 end
