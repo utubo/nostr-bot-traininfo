@@ -209,7 +209,8 @@ config['traininfo'].each do |conf|
       text.sub!(/^([^。]*)。$/, '\1')
     end
 
-    line = "#{$STS[status].sign}#{item['trainLine']}：#{text}"
+    trainLine = item['trainLine2'].empty?() ? item['trainLine'] : item['trainLine2']
+    line = "#{$STS[status].sign}#{trainLine}：#{text}"
     lines << line
   end
 
