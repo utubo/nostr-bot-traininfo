@@ -221,8 +221,10 @@ config['traininfo'].each do |conf|
   end
   lines = trancate(lines, $MAX_ROWS)
   lines << link_url
-  msg = lines.flatten.join("\n")
-  if msg == before_data['last_post']
+  lines.flatten!
+  msg = lines.join("\n")
+  #if msg == before_data['last_post']
+  if lines.sort == before_data['last_post'].split("\n").sort
     logger.info('not modified.')
     next
   end
