@@ -226,7 +226,6 @@ config['traininfo'].each do |conf|
     next
   end
   lines = trancate(lines, $MAX_ROWS)
-  lines << ''
   lines << link_url
   msg = lines.flatten.join("\n")
   if msg == File.read(cachetext, encoding: Encoding::UTF_8)
