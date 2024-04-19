@@ -3,6 +3,8 @@
 [NHK鉄道運行情報(関東)](https://www3.nhk.or.jp/news/traffic/kanto/)を10分毎に確認し変化があったらポストする
 nostrとBlueskyのbotです(非公式)
 
+運転見合わせ、運転再開・平常運転、列車遅延・その他の順で、新しいもの順に表示します。
+
 ## アカウント
 - nostr
   - nostr:npub1zwd3a5phvnqsu7ttjqkndd2arqspd7trltw52jxfnrppsuhkdv5q75tfh5

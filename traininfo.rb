@@ -37,8 +37,6 @@ $STS[$STS_RECOVER] = OpenStruct.new({ sign: '🟢', level: 2 })
 $STS[$STS_SUSPEND] = OpenStruct.new({ sign: '🔴', level: 3 })
 $STS['運転計画']   = OpenStruct.new({ sign: 'ℹ️', level: 0 })
 $ALL_CLEAR = "🟢現在、見合わせ・遅延などの情報はありません\n🎶🚃🚃🚃🚃🚃🚃🚃🚃🚃..."
-$UPDATES = '🆙更新'
-$NO_UPDATES = '🕒現状維持'
 $OVERFLOW = '...他%d件'
 
 # --------------------------------
@@ -67,6 +65,13 @@ def trancate(lines, count)
   overflow = lines.length - count
   l << ($OVERFLOW % overflow) if 0 < overflow
   return l
+end
+
+def to_timestamp(text)
+  t = text.gsub(/(^|[^0-9])([0-9][^0-9])/, '\10\2')
+  dt = Time.strptime(t, '%m月%d日 %H時%M分')
+  dt = dt.next_year(-1) if $NOW < dt
+  return dt
 end
 
 # --------------------------------
@@ -144,11 +149,13 @@ config['traininfo'].each do |conf|
 
   # ---------------
   # make massage
-  updates = []
-  no_updates = []
   is_all_clear = true
-  text_long = ''
-  sorted = latest.sort { |a, b| $STS[b['status']].level <=> $STS[a['status']].level }
+  lines = []
+  sorted = latest.sort { |a, b|
+    $STS[b['status']].level <=> $STS[a['status']].level ||
+    to_timestamp(b['pubDate']) <=> to_timestamp(a['pubDate']) ||
+    $STS[b['trainLineCode']].level <=> $STS[a['trainLineCode']].level
+  }
   sorted.each do |item|
     next if match_any?(item, ignore)
     infoId = item['infoId']
@@ -174,7 +181,7 @@ config['traininfo'].each do |conf|
     next if status == $STS_RECOVER && before_sts[pk] == $STS_RECOVER
 
     text = item['textShort'].dup
-    no_upd = text == before_msg[pk]
+    is_upd = text != before_msg[pk]
 
     shortened = false
     if status == $STS_NORMAL || status == $STS_RECOVER
@@ -182,7 +189,7 @@ config['traininfo'].each do |conf|
       shortened = true
     elsif status == $STS_SUSPEND
       # The suspended section is important.
-    elsif no_upd
+    elsif !is_upd
       if status == $STS_DELAY
         text = status.dup
         shortened = true
@@ -205,41 +212,23 @@ config['traininfo'].each do |conf|
       text.gsub!(/再開しました。/, '再開。')
       text.gsub!(/を見合わせています。/, '見合わせ。')
       text.gsub!(/を中止しています。/, '中止。')
-      text.sub!(/。$/, '') if no_upd
+      text.sub!(/。$/, '') if !is_upd
     end
 
     line = "#{$STS[status].sign}#{item['trainLine']}：#{text}"
-    if no_upd
-      no_updates << line
-    else
-      updates << line
-      text_long = "#{$STS[status].sign}#{item['trainLine']}：#{item['textLong']}"
-    end
+    lines << line
   end
 
-  lines = []
   if is_all_clear
-    lines << $ALL_CLEAR
-  else
-    if updates.length == 0
-      logger.info('not modified.')
-      next
-    elsif updates.length == 1
-      lines << $UPDATES
-      lines << text_long
-    else
-      lines << $UPDATES
-      lines << trancate(updates, $MAX_ROWS)
-    end
-    if no_updates.length != 0
-      lines << $NO_UPDATES
-      lines << trancate(no_updates, $MAX_ROWS)
-    end
+    lines = [$ALL_CLEAR]
+  elsif lines.empty?
+    logger.info('not modified.')
+    next
   end
-
+  lines = trancate(lines, $MAX_ROWS)
+  lines << ''
   lines << link_url
   msg = lines.flatten.join("\n")
-
   if msg == File.read(cachetext, encoding: Encoding::UTF_8)
     logger.info('not modified.')
     next
@@ -256,7 +245,7 @@ config['traininfo'].each do |conf|
     session = Bskyrb::Session.new(credentials, 'https://bsky.social')
     bsky = Bskyrb::RecordManager.new(session)
     post = bsky.create_post(msg)
-    logger.log(Logger::DEBUG, "#{bsky_username} #{post}")
+    logger.debug("#{bsky_username} #{post}")
   end
   if !$test && $nostr
     n = Nostr.new({ private_key: private_key })
