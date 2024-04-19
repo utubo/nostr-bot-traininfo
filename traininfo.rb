@@ -154,7 +154,7 @@ config['traininfo'].each do |conf|
   sorted = latest.sort { |a, b|
     $STS[b['status']].level <=> $STS[a['status']].level ||
     to_timestamp(b['pubDate']) <=> to_timestamp(a['pubDate']) ||
-    $STS[b['trainLineCode']].level <=> $STS[a['trainLineCode']].level
+    b['trainLineCode'] <=> a['trainLineCode']
   }
   sorted.each do |item|
     next if match_any?(item, ignore)
