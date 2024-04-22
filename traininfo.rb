@@ -122,7 +122,7 @@ config['traininfo'].each do |conf|
   before_json = File.read(cachefile)
   latest_json = URI.open($URL_BASE % jsonfile, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE).read
   if before_json == latest_json
-    logger.info('not modified.')
+    logger.info('not modified.(same json)')
     next
   end
   before = JSON.load(before_json)['channel']['item']
@@ -224,9 +224,8 @@ config['traininfo'].each do |conf|
   lines << link_url
   lines.flatten!
   msg = lines.join("\n")
-  #if msg == before_data['last_post']
-  if lines.sort == before_data['last_post'].split("\n").sort
-    logger.info('not modified.')
+  if msg == before_data['last_post'] || lines.sort == before_data['last_post'].split("\n").sort
+    logger.info('not modified.(same message)')
     next
   end
 
