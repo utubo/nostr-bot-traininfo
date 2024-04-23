@@ -74,6 +74,14 @@ def to_timestamp(text)
   return dt
 end
 
+def sort_keys(item)
+  return [
+    $STS[item['status']].level,
+    to_timestamp(item['pubDate']),
+    item['trainLineCode']
+  ]
+end
+
 # --------------------------------
 # Main
 logger.info('start')
@@ -145,11 +153,9 @@ config['traininfo'].each do |conf|
   # make massage
   is_all_clear = true
   lines = []
-  sorted = latest.sort { |a, b|
-    $STS[b['status']].level <=> $STS[a['status']].level ||
-    to_timestamp(b['pubDate']) <=> to_timestamp(a['pubDate']) ||
-    b['trainLineCode'] <=> a['trainLineCode']
-  }
+  sorted = latest.sort do |a, b|
+    sort_keys(b) <=> sort_keys(a)
+  end 
   sorted.each do |item|
     next if match_any?(item, ignore)
     infoId = item['infoId']
